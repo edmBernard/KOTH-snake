@@ -3,14 +3,17 @@
 
 #include <game/direction.hpp>
 
-#include <vector>
+#include <helpers/convertion.hpp>
+
 #include <iostream>
+#include <variant>
+#include <vector>
 
 // I try to made a data oriented design. I'm not fan, maybe I'm doing it wrong.
 class States {
 public:
   States(int width, int height)
-      : width(width), height(height), board(height*width, 0) {
+      : width(width), height(height), board(height * width, 0) {
   }
 
   int addPlayer(int x, int y, int color) {
@@ -18,7 +21,7 @@ public:
     positionsY.push_back(y);
     colors.push_back(color);
     directions.push_back(DIRECTION::NONE);
-    board[offset(x,y)] = color;
+    board[offset(x, y)] = color;
     // return player index we currently don't support deletion
     return getLength() - 1;
   }
@@ -94,6 +97,29 @@ public:
     return y + x * width;
   }
 
+  std::variant<int, std::string> validateKey(const std::string_view &key) {
+    auto result = convert<int>(key);
+    if (!result) {
+      return "Bad key format";
+    }
+    if (result.value() < 0 || result.value() > getLength() - 1) {
+      return "Don't try to hack!";
+    }
+    return result.value();
+  }
+
+  std::variant<DIRECTION, std::string> validateDirection(const std::string_view &dir) {
+    auto result = convert<int>(dir);
+    if (!result) {
+      return "Bad direction format";
+    }
+    if (result.value() > 5 || result.value() < 0) {
+      return "Invalid value";
+    }
+    return static_cast<DIRECTION>(result.value());
+  }
+
+
   long epoch = 0;
   int width;
   int height;
@@ -104,7 +130,7 @@ public:
   std::vector<int> board;
 };
 
-inline std::ostream& operator<<(std::ostream& os, const States &state) {
+inline std::ostream &operator<<(std::ostream &os, const States &state) {
   for (size_t i = 0; i < state.board.size(); ++i) {
     os << state.board[i] << " ";
     if ((i + 1) % state.width == 0) {

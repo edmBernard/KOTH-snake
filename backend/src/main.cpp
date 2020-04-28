@@ -3,15 +3,15 @@
 #include <string>
 #include <mutex>
 #include <random>
-#include <charconv>
 
 #include <cxxopts.hpp>
 #include <uwebsockets/App.h>
 #include <fmt/format.h>
 
 /* Helpers for this example */
-#include "helpers/AsyncFileReader.h"
-#include "helpers/AsyncFileStreamer.h"
+#include <helpers/AsyncFileReader.h>
+#include <helpers/AsyncFileStreamer.h>
+
 
 #include <game/player.hpp>
 #include <game/game_loop.hpp>
@@ -82,32 +82,43 @@ int main(int argc, char **argv) {
                 // TODO: add json output format currently key,x,y,color
                 res->writeHeader("Content-Type", "text/html; charset=utf-8")->end(fmt::format("{0},{1},{2},{3}", playerIdx, x, y, color));
               })
+
+
               .get("/api/status/:key", [&state](auto *res, auto *req) {
                 std::cout << req->getParameter(0) << std::endl;
                 // TODO: add hash table to obfuscate player index in a hash or big number
 
                 // convertion between string_view to int was ugly as fuck but don't find better way
                 // TODO: factorize convertion string_view to int
-                auto sv = req->getParameter(0);
-                int key;
-                auto result = std::from_chars(sv.data(), sv.data() + sv.size(), key);
-                if (result.ec == std::errc::invalid_argument) {
-                  // TODO: return proper error code
-                  res->writeHeader("Content-Type", "text/html; charset=utf-8")->end("Bad key format");
+                auto key_variant = state.validateKey(req->getParameter(0));
+                if (key_variant.index() == 1) {
+                  res->writeHeader("Content-Type", "text/html; charset=utf-8")->end(std::get<std::string>(key_variant));
                 }
-
-                if (key > state.getLength()) {
-                  res->writeHeader("Content-Type", "text/html; charset=utf-8")->end("Don't try to hack !");
-                }
-
+                int key = std::get<int>(key_variant);
                 res->writeHeader("Content-Type", "application/json")->end(fmt::format("{0},{1},{2}", state.positionsX[key], state.positionsY[key], state.colors[key]));
               })
-              .post("/api/move/:key/:x/:y", [&asyncFileStreamer](auto *res, auto *req) {
-                std::cout << req->getParameter(0) << std::endl;
-                std::cout << req->getParameter(1) << std::endl;
-                std::cout << req->getParameter(2) << std::endl;
+
+
+              .post("/api/move/:key/:direction", [&state](auto *res, auto *req) {
+
+                auto key_variant = state.validateKey(req->getParameter(0));
+                if (key_variant.index() == 1) {
+                  res->writeHeader("Content-Type", "text/html; charset=utf-8")->end(std::get<std::string>(key_variant));
+                }
+                int key = std::get<int>(key_variant);
+
+                auto dir_variant = state.validateDirection(req->getParameter(1));
+                if (dir_variant.index() == 1) {
+                  res->writeHeader("Content-Type", "text/html; charset=utf-8")->end(std::get<std::string>(dir_variant));
+                }
+                int direction = std::get<DIRECTION>(dir_variant);
+
+                state.setDirection(key, static_cast<DIRECTION>(direction));
+
                 res->writeHeader("Content-Type", "text/html; charset=utf-8")->end("success");
               })
+
+
               .post("/api/quit/:key", [&asyncFileStreamer](auto *res, auto *req) {
                 std::cout << req->getParameter(0) << std::endl;
                 res->writeHeader("Content-Type", "text/html; charset=utf-8")->end("success");
@@ -115,6 +126,8 @@ int main(int argc, char **argv) {
               .get("/api/*", [&asyncFileStreamer](auto *res, auto *req) {
                 res->writeHeader("Content-Type", "application/json")->end("{\"hello\": \"world\"}");
               })
+
+
               // Static File
               .get("/static/:folder/:file", [&asyncFileStreamer](auto *res, auto *req) {
                 asyncFileStreamer.streamFile(res, fmt::format("/{0}/{1}", req->getParameter(0), req->getParameter(1)));
