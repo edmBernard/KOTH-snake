@@ -11,18 +11,21 @@ public:
       : height(height), width(width) {
   }
 
-  int add(int x, int y) {
+  int addPlayer(int x, int y) {
     positionsX.push_back(x);
     positionsY.push_back(y);
     colors.push_back(0);
     directions.push_back(DIRECTION::NONE);
     // return player index
-    return getLength();
+    return getLength() - 1;
   }
 
-  void setOrder(int playerIdx, DIRECTION direction) {
-    // TODO: Add test
+  void setDirection(int playerIdx, DIRECTION direction) {
     directions[playerIdx] = direction;
+  }
+
+  DIRECTION getDirection(int playerIdx) {
+    return directions[playerIdx];
   }
 
   void move(int &x, int &y, DIRECTION direction) {
@@ -61,6 +64,7 @@ public:
     // TODO: Add test
     return colors.size();
   };
+
 
   void update() {
     // TODO:: Add test
