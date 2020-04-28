@@ -5,6 +5,7 @@
 
 #include <vector>
 
+// I try to made a data oriented design. I'm not fan, maybe I'm doing it wrong.
 class States {
 public:
   States(int height, int width)
@@ -17,7 +18,7 @@ public:
     colors.push_back(color);
     directions.push_back(DIRECTION::NONE);
     board[offset(x,y)] = color;
-    // return player index
+    // return player index we currently don't support deletion
     return getLength() - 1;
   }
 
@@ -75,13 +76,19 @@ public:
 
   void update() {
     for (auto i = 0; i < getLength(); ++i) {
+      // update position
       move(positionsX[i], positionsY[i], directions[i]);
+
+      // update board color on position
       board[offset(positionsX[i], positionsY[i])] = colors[i];
+
+      // reset all direction
       directions[i] = DIRECTION::NONE;
     }
     epoch++;
   }
 
+  // compute offset to convert (x,y) in buffer position
   int offset(int x, int y) {
     return y + x * width;
   }
