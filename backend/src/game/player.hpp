@@ -9,8 +9,8 @@
 // I try to made a data oriented design. I'm not fan, maybe I'm doing it wrong.
 class States {
 public:
-  States(int height, int width)
-      : height(height), width(width), board(height*width, 0) {
+  States(int width, int height)
+      : width(width), height(height), board(height*width, 0) {
   }
 
   int addPlayer(int x, int y, int color) {
@@ -95,8 +95,8 @@ public:
   }
 
   long epoch = 0;
-  int height;
   int width;
+  int height;
   std::vector<int> positionsX;
   std::vector<int> positionsY;
   std::vector<int> colors;

@@ -1,6 +1,7 @@
 // This is a simple HTTP(S) web server much like Python's SimpleHTTPServer
 
 #include <string>
+#include <mutex>
 
 #include <cxxopts.hpp>
 #include <uwebsockets/App.h>
@@ -10,6 +11,8 @@
 #include "helpers/AsyncFileReader.h"
 #include "helpers/AsyncFileStreamer.h"
 
+#include <game/player.hpp>
+#include <game/game_loop.hpp>
 
 int main(int argc, char **argv) {
   try {
@@ -22,6 +25,8 @@ int main(int argc, char **argv) {
     options.add_options()("help", "Print help")
       ("p,port", "port", cxxopts::value<int>()->default_value("80"), "PORT")
       ("d,directory", "directory to serve", cxxopts::value<std::string>(), "DIRECTORY")
+      ("w,width", "board game width", cxxopts::value<int>()->default_value("40"), "WIDTH")
+      ("h,height", "board game height", cxxopts::value<int>()->default_value("10"), "HEIGHT")
       ;
     // clang-format on
     options.parse_positional({"directory"});
@@ -41,6 +46,10 @@ int main(int argc, char **argv) {
     int port = result["port"].as<int>();
 
     AsyncFileStreamer asyncFileStreamer(root);
+
+    States state(result["width"].as<int>(), result["height"].as<int>());
+    std::mutex mx;
+    std::thread logicLoop(gameLoop, std::ref(state), std::ref(mx));
 
     uWS::App()
               .get("/api/register/:name", [&asyncFileStreamer](auto *res, auto *req) {
@@ -81,6 +90,7 @@ int main(int argc, char **argv) {
           }
         })
         .run();
+
 
   } catch (const cxxopts::OptionException &e) {
     std::cout << "Error: parsing options: " << e.what() << std::endl;
