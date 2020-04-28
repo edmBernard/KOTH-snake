@@ -4,13 +4,12 @@
 
 #include <cxxopts.hpp>
 #include <uwebsockets/App.h>
+#include <fmt/format.h>
 
 /* Helpers for this example */
 #include "helpers/AsyncFileReader.h"
 #include "helpers/AsyncFileStreamer.h"
 
-/* optparse */
-#define OPTPARSE_IMPLEMENTATION
 
 int main(int argc, char **argv) {
   try {
@@ -43,8 +42,16 @@ int main(int argc, char **argv) {
 
     AsyncFileStreamer asyncFileStreamer(root);
 
-    uWS::App().get("/*", [&asyncFileStreamer](auto *res, auto *req) {
-                asyncFileStreamer.streamFile(res, req->getUrl());
+    uWS::App().get("/api/*", [&asyncFileStreamer](auto *res, auto *req) {
+                res->writeHeader("Content-Type", "application/json")->end("{\"hello\": \"world\"}");
+              })
+              .get("/static/:folder/:file", [&asyncFileStreamer](auto *res, auto *req) {
+                asyncFileStreamer.streamFile(res, fmt::format("/{0}/{1}", req->getParameter(0), req->getParameter(1)));
+                res->end();
+              })
+              .get("/*", [&asyncFileStreamer](auto *res, auto *req) {
+                // You can efficiently stream huge files too
+                asyncFileStreamer.streamFile(res, "/");
                 res->end();
               })
         .listen(port, [port, root](auto *token) {

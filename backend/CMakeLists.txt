@@ -20,5 +20,5 @@ SET(CMAKE_CXX_FLAGS "-Wall -fPIC -fpermissive -g")
 #**************************************************************************************************
 add_executable(koth-snake-server ${SOURCES})
 set_property(TARGET koth-snake-server PROPERTY CXX_STANDARD 17)
-target_link_libraries(koth-snake-server -pthread -lstdc++fs ${USOCKETS_LIB} ZLIB::ZLIB)
+target_link_libraries(koth-snake-server -pthread -lstdc++fs ${USOCKETS_LIB} ZLIB::ZLIB fmt::fmt)
 
