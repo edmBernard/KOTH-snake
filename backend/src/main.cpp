@@ -82,9 +82,25 @@ int main(int argc, char **argv) {
                 // TODO: add json output format currently key,x,y,color
                 res->writeHeader("Content-Type", "text/html; charset=utf-8")->end(fmt::format("{0},{1},{2},{3}", playerIdx, x, y, color));
               })
-              .post("/api/status/:key", [&asyncFileStreamer](auto *res, auto *req) {
+              .get("/api/status/:key", [&state](auto *res, auto *req) {
                 std::cout << req->getParameter(0) << std::endl;
-                res->writeHeader("Content-Type", "application/json")->end("{\"position\":{\"x\":1, \"y\": 1}}");
+                // TODO: add hash table to obfuscate player index in a hash or big number
+
+                // convertion between string_view to int was ugly as fuck but don't find better way
+                // TODO: factorize convertion string_view to int
+                auto sv = req->getParameter(0);
+                int key;
+                auto result = std::from_chars(sv.data(), sv.data() + sv.size(), key);
+                if (result.ec == std::errc::invalid_argument) {
+                  // TODO: return proper error code
+                  res->writeHeader("Content-Type", "text/html; charset=utf-8")->end("Bad key format");
+                }
+
+                if (key > state.getLength()) {
+                  res->writeHeader("Content-Type", "text/html; charset=utf-8")->end("Don't try to hack !");
+                }
+
+                res->writeHeader("Content-Type", "application/json")->end(fmt::format("{0},{1},{2}", state.positionsX[key], state.positionsY[key], state.colors[key]));
               })
               .post("/api/move/:key/:x/:y", [&asyncFileStreamer](auto *res, auto *req) {
                 std::cout << req->getParameter(0) << std::endl;
