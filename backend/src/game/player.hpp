@@ -28,25 +28,33 @@ public:
     return directions[playerIdx];
   }
 
+  std::pair<int, int> getPosition(int playerIdx) {
+    return {positionsX[playerIdx], positionsY[playerIdx]};
+  }
+
   void move(int &x, int &y, DIRECTION direction) {
+    // Direction image convention
+    // x positif is down
+    // y positif is right
+
     switch (direction) {
     case DIRECTION::NONE:
       // TODO: Add test
       break;
-    case DIRECTION::UP:
-      x += 1;
-      if (x > height)
-        x = height;
-      break;
     case DIRECTION::DOWN:
+      x += 1;
+      if (x > height - 1)
+        x = height - 1;
+      break;
+    case DIRECTION::UP:
       x -= 1;
       if (x < 0)
         x = 0;
       break;
     case DIRECTION::RIGHT:
       y += 1;
-      if (y > width)
-        y = width;
+      if (y > width - 1)
+        y = width - 1;
       break;
     case DIRECTION::LEFT:
       y -= 1;

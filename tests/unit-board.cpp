@@ -6,8 +6,8 @@
 TEST_CASE("Board", "[Board]") {
   States my_state(10, 10);
   SECTION("Bundaries") {
-    SECTION("UP") {
-      DIRECTION direction = DIRECTION::UP;
+    SECTION("DOWN") {
+      DIRECTION direction = DIRECTION::DOWN;
       SECTION("FREE") {
         int x = 5;
         int y = 5;
@@ -16,22 +16,22 @@ TEST_CASE("Board", "[Board]") {
         REQUIRE(y == 5);
       }
       SECTION("LIMIT") {
-        int x = 10;
+        int x = 9;
         int y = 5;
         my_state.move(x, y, direction);
-        REQUIRE(x == 10);
+        REQUIRE(x == 9);
         REQUIRE(y == 5);
       }
       SECTION("OUT OF LIMIT") {
         int x = 20;
         int y = 5;
         my_state.move(x, y, direction);
-        REQUIRE(x == 10);
+        REQUIRE(x == 9);
         REQUIRE(y == 5);
       }
     }
-    SECTION("DOWN") {
-      DIRECTION direction = DIRECTION::DOWN;
+    SECTION("UP") {
+      DIRECTION direction = DIRECTION::UP;
       SECTION("FREE") {
         int x = 5;
         int y = 5;
@@ -65,17 +65,17 @@ TEST_CASE("Board", "[Board]") {
       }
       SECTION("LIMIT") {
         int x = 5;
-        int y = 10;
+        int y = 9;
         my_state.move(x, y, direction);
         REQUIRE(x == 5);
-        REQUIRE(y == 10);
+        REQUIRE(y == 9);
       }
       SECTION("OUT OF LIMIT") {
         int x = 5;
         int y = 20;
         my_state.move(x, y, direction);
         REQUIRE(x == 5);
-        REQUIRE(y == 10);
+        REQUIRE(y == 9);
       }
     }
     SECTION("LEFT") {
