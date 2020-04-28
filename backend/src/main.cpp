@@ -2,6 +2,8 @@
 
 #include <string>
 #include <mutex>
+#include <random>
+#include <charconv>
 
 #include <cxxopts.hpp>
 #include <uwebsockets/App.h>
@@ -47,14 +49,38 @@ int main(int argc, char **argv) {
 
     AsyncFileStreamer asyncFileStreamer(root);
 
+
     States state(result["width"].as<int>(), result["height"].as<int>());
+
+
     std::mutex mx;
     std::thread logicLoop(gameLoop, std::ref(state), std::ref(mx));
 
+    std::random_device rd;
+    std::mt19937 randomGenerator(rd());
+    std::uniform_int_distribution<int> distWidth(0, state.width - 1);
+    std::uniform_int_distribution<int> distHeight(0, state.height - 1);
+
     uWS::App()
-              .get("/api/register/:name", [&asyncFileStreamer](auto *res, auto *req) {
-                std::cout << req->getParameter(0) << std::endl;
-                res->writeHeader("Content-Type", "application/json")->end("{\"key\": \"XXX\", \"position\":{\"x\":1, \"y\": 1}}");
+              .get("/api/register/:name/:color", [&state, &randomGenerator, &distWidth, &distHeight](auto *res, auto *req) {
+                // TODO: do something with use the player name
+                int x = distHeight(randomGenerator);
+                int y = distWidth(randomGenerator);
+
+                // convertion between string_view to int was ugly as fuck but don't find better way
+                auto sv = req->getParameter(1);
+                int color;
+                auto result = std::from_chars(sv.data(), sv.data() + sv.size(), color);
+                if (result.ec == std::errc::invalid_argument) {
+                  // TODO: return proper error code
+                  res->writeHeader("Content-Type", "text/html; charset=utf-8")->end("Bad color value");
+                }
+
+                int playerIdx = state.addPlayer(x, y, color);
+
+                // TODO: add hash table to obfuscate player index in a hash or big number
+                // TODO: add json output format currently key,x,y,color
+                res->writeHeader("Content-Type", "text/html; charset=utf-8")->end(fmt::format("{0},{1},{2},{3}", playerIdx, x, y, color));
               })
               .post("/api/status/:key", [&asyncFileStreamer](auto *res, auto *req) {
                 std::cout << req->getParameter(0) << std::endl;
