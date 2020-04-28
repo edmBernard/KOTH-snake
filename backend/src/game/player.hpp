@@ -8,14 +8,15 @@
 class States {
 public:
   States(int height, int width)
-      : height(height), width(width) {
+      : height(height), width(width), board(height*width, 0) {
   }
 
-  int addPlayer(int x, int y) {
+  int addPlayer(int x, int y, int color) {
     positionsX.push_back(x);
     positionsY.push_back(y);
-    colors.push_back(0);
+    colors.push_back(color);
     directions.push_back(DIRECTION::NONE);
+    board[offset(x,y)] = color;
     // return player index
     return getLength() - 1;
   }
@@ -69,20 +70,22 @@ public:
   }
 
   inline int getLength() {
-    // TODO: Add test
     return colors.size();
   };
 
-
   void update() {
-    // TODO:: Add test
     for (auto i = 0; i < getLength(); ++i) {
       move(positionsX[i], positionsY[i], directions[i]);
+      board[offset(positionsX[i], positionsY[i])] = colors[i];
+      directions[i] = DIRECTION::NONE;
     }
     epoch++;
   }
 
-private:
+  int offset(int x, int y) {
+    return y + x * width;
+  }
+
   long epoch = 0;
   int height;
   int width;
@@ -90,4 +93,5 @@ private:
   std::vector<int> positionsY;
   std::vector<int> colors;
   std::vector<DIRECTION> directions;
+  std::vector<int> board;
 };

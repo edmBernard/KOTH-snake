@@ -5,6 +5,18 @@
 
 TEST_CASE("Board", "[Board]") {
   States my_state(10, 10);
+  SECTION("Dimension") {
+    REQUIRE(my_state.board.size() == 100);
+  }
+  SECTION("offset") {
+    REQUIRE(my_state.offset(0, 0) == 0);
+    REQUIRE(my_state.offset(0, 1) == 1);
+    REQUIRE(my_state.offset(0, 2) == 2);
+    REQUIRE(my_state.offset(1, 0) == 10);
+    REQUIRE(my_state.offset(1, 1) == 11);
+    REQUIRE(my_state.offset(2, 0) == 20);
+    REQUIRE(my_state.offset(2, 1) == 21);
+  }
   SECTION("Bundaries") {
     SECTION("DOWN") {
       DIRECTION direction = DIRECTION::DOWN;
