@@ -12,11 +12,10 @@ public:
   }
 
   int add(int x, int y) {
-    // TODO: Add test
     positionsX.push_back(x);
     positionsY.push_back(y);
     colors.push_back(0);
-    colors.push_back(DIRECTION::NONE);
+    directions.push_back(DIRECTION::NONE);
     // return player index
     return getLength();
   }

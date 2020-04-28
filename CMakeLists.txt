@@ -39,6 +39,7 @@ if(BUILD_UNIT_TESTS)
   SET(TEST_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/tests/unit-main.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/tests/unit-board.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/tests/unit-states.cpp
   )
 
   add_executable(unit-test ${TEST_SOURCES} ${SOURCES} ${TEST_HEADERS})
