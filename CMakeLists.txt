@@ -24,11 +24,14 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/backend/src)
 #     message(STATUS "${_variableName}=${${_variableName}}")
 # endforeach()
 
+#**************************************************************************************************
+# Set compiler ************************************************************************************
+set(CMAKE_CXX_FLAGS "-Wall -fPIC -fpermissive -std=c++17")
+
+
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
 add_subdirectory(backend)
-
-
 
 #**************************************************************************************************
 # Build Tests *************************************************************************************

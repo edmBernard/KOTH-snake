@@ -38,10 +38,10 @@ TEST_CASE("Player", "[Player]") {
 TEST_CASE("Update", "[State]") {
   int dim = 10;
   States my_state(dim, dim);
-  int player1 = my_state.addPlayer(0, 0, 0);
-  int player2 = my_state.addPlayer(9, 0, 0);
-  int player3 = my_state.addPlayer(9, 9, 0);
-  int player4 = my_state.addPlayer(0, 9, 0);
+  int player1 = my_state.addPlayer(0, 0, 1);
+  int player2 = my_state.addPlayer(9, 0, 2);
+  int player3 = my_state.addPlayer(9, 9, 3);
+  int player4 = my_state.addPlayer(0, 9, 4);
 
 
   for (int i = 0; i < 12; ++i) {

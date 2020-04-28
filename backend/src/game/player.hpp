@@ -4,6 +4,7 @@
 #include <game/direction.hpp>
 
 #include <vector>
+#include <iostream>
 
 // I try to made a data oriented design. I'm not fan, maybe I'm doing it wrong.
 class States {
@@ -102,3 +103,13 @@ public:
   std::vector<DIRECTION> directions;
   std::vector<int> board;
 };
+
+inline std::ostream& operator<<(std::ostream& os, const States &state) {
+  for (size_t i = 0; i < state.board.size(); ++i) {
+    os << state.board[i] << " ";
+    if ((i + 1) % state.width == 0) {
+      os << "\n";
+    }
+  }
+  return os;
+}
