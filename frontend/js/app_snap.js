@@ -1,11 +1,7 @@
 var root = document.body
 
 // parameters
-var board_size = {
-    width: 800,
-    heigth: 400
-};
-
+var board_width = 800;
 
 // Create Color Wheel
 function hsl2rgb(h,s,l)
@@ -37,7 +33,8 @@ var Client = {
         return m("main", { class: "main" }, [
             m("h1", { class: "small-margin-bottom" }, "KOTH Snake"),
             m("div", { class: "pure-g" }, m("div", { class: "pure-u-1" }, m(Player))),
-            m("div", { class: "pure-g" }, m("div", { class: "pure-u-1" }, m(Board, {size: board_size, color_wheel: color_wheel})))
+            m("button", {class: "pure-button button-small pure-button-primary", onclick: function() {BoardState.update_board();}}, "Update"),
+            m("div", { class: "pure-g" }, m("div", { class: "pure-u-1" }, m(Board, {board_width: board_width, color_wheel: color_wheel})))
         ])
     }
 }

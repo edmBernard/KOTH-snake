@@ -36,12 +36,26 @@ var BoardState = {
 
 var Board = {
   oninit: function (vnode) {
-    BoardState.size = {
-      ...vnode.attrs.board_size,
-    };
+    BoardState.size.width = vnode.attrs.board_width;
     BoardState.color_wheel = vnode.attrs.color_wheel;
-    console.log(vnode.attrs.board_size);
-    console.log(BoardState.size);
+
+    m.request({
+      method: "GET",
+      url: "/api/map",
+      extract: function (xhr) { return xhr.responseText }
+    })
+    .then(function (result) {
+      let res = result.split(";");
+      let [width, height] = res[0].split(",");
+      let board = res[1].split(",");
+
+      BoardState.dimension = {
+        width: width,
+        height: height
+      };
+      BoardState.squareSize = BoardState.size.width / width
+      BoardState.size.height = height * BoardState.squareSize;
+    });
   },
   oncreate: function (vnode) {
     var sb = Snap(vnode.dom);
