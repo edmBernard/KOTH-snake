@@ -1,29 +1,11 @@
 var root = document.body
 
 // parameters
-var board_size = 800;
-var height;
-var width;
-var square_size;
+var board_size = {
+    width: 800,
+    heigth: 400
+};
 
-var Board = {
-    view: function(vnode) {
-        return m("svg", {id: "board", width: board_size, height: board_size});
-    }
-}
-
-var Client = {
-    view: function(vnode) {
-        return m("main", {class: "main"}, [
-            m("h1", {class: "small-margin-bottom"}, "KOTH Snake"),
-            m("div", {class: "pure-g"}, m("div", {class: "pure-u-1"}, m(Board)))
-        ])
-    }
-}
-
-m.mount(root, Client)
-
-var sb = Snap("#board");
 
 // Create Color Wheel
 function hsl2rgb(h,s,l)
@@ -39,7 +21,7 @@ let rgb2hex = (r,g,b) =>
 ).join('');
 
 var nbr_color = 10
-var nbr_color_row = 10
+var nbr_color_row = 2
 var color_wheel = []
 color_wheel.push("#ffffff");
 for (let j = 0; j < nbr_color_row; j++) {
@@ -48,28 +30,18 @@ for (let j = 0; j < nbr_color_row; j++) {
     }
 }
 
-m.request({
-    method: "GET",
-    url: "/api/map",
-    extract: function(xhr) {return xhr.responseText}
-})
-.then(function(result) {
-    console.log("toto");
-    console.log(result);
 
-    let res = result.split(";");
-    let [width, height] = res[0].split(",");
-    let board = res[1].split(",");
-    let square_size = board_size / width
 
-    console.log(width);
-    console.log(height);
-
-    for (let j = 0; j < height; j++) {
-        for (let i = 0; i < width; i++) {
-            let square = sb.rect(i * square_size, j * square_size, square_size, square_size);
-            square.attr({fill: color_wheel[board[i + j*width]]});
-            square.attr({stroke: "#cccccc", strokeWidth: 1});
-        }
+var Client = {
+    view: function (vnode) {
+        return m("main", { class: "main" }, [
+            m("h1", { class: "small-margin-bottom" }, "KOTH Snake"),
+            m("div", { class: "pure-g" }, m("div", { class: "pure-u-1" }, m(Player))),
+            m("div", { class: "pure-g" }, m("div", { class: "pure-u-1" }, m(Board, {size: board_size, color_wheel: color_wheel})))
+        ])
     }
-})
+}
+
+m.mount(root, Client)
+
+var sb = Snap("#board");
