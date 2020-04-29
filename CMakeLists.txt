@@ -36,7 +36,7 @@ add_subdirectory(backend)
 #**************************************************************************************************
 # Build Tests *************************************************************************************
 option(BUILD_UNIT_TESTS "Build the unit tests" ON)
-if(BUILD_UNIT_TESTS)
+  if(BUILD_UNIT_TESTS)
   enable_testing()
 
   SET(TEST_SOURCES
@@ -45,11 +45,30 @@ if(BUILD_UNIT_TESTS)
     ${CMAKE_CURRENT_SOURCE_DIR}/tests/unit-states.cpp
   )
 
-  add_executable(unit-test ${TEST_SOURCES} ${SOURCES} ${TEST_HEADERS})
+  add_executable(unit-test ${TEST_SOURCES} ${SOURCES})
   target_link_libraries(unit-test PRIVATE -pthread -lstdc++fs)
 
   add_test(NAME "unit_test_default"
     COMMAND unit-test
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+  )
+endif()
+
+#**************************************************************************************************
+# Build Benchmark *********************************************************************************
+option(BUILD_BENCHMARK "Build the benchmark" ON)
+if(BUILD_BENCHMARK)
+  enable_testing()
+
+  SET(BENCHMARK_SOURCES
+    ${CMAKE_CURRENT_SOURCE_DIR}/benchmark/main.cpp
+  )
+
+  add_executable(benchmark ${BENCHMARK_SOURCES} ${SOURCES})
+  target_link_libraries(benchmark PRIVATE -pthread -lstdc++fs)
+
+  add_test(NAME "benchmark_default"
+    COMMAND benchmark
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
   )
 endif()
