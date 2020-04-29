@@ -120,12 +120,12 @@ int main(int argc, char **argv) {
 
 
               .get("/api/map", [&state](auto *res, auto *req) {
-                res->writeHeader("Content-Type", "application/json")->end(state.serializeMap());
+                res->writeHeader("Content-Type", "text/html; charset=utf-8")->end(state.serializeMap());
               })
 
 
               .get("/api/players", [&state](auto *res, auto *req) {
-                res->writeHeader("Content-Type", "application/json")->end(state.serializePlayers());
+                res->writeHeader("Content-Type", "text/html; charset=utf-8")->end(state.serializePlayers());
               })
 
 
