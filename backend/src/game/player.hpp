@@ -6,6 +6,7 @@
 #include <helpers/convertion.hpp>
 
 #include <iostream>
+#include <sstream>      // std::ostringstream
 #include <variant>
 #include <vector>
 
@@ -95,6 +96,29 @@ public:
   // compute offset to convert (x,y) in buffer position
   int offset(int x, int y) {
     return y + x * width;
+  }
+
+  std::string serializeMap() {
+    std::ostringstream os;
+    os << width << "," << height << ";";
+    for (auto value : board) {
+      os << value << ",";
+    }
+    return os.str();
+  }
+
+  std::string serializePlayers() {
+    std::vector<int> tmp(board.size(), 0);
+    for (int i = 0; i< getLength(); ++i){
+      tmp[offset(positionsX[i], positionsY[i])] = 1;
+    }
+
+    std::ostringstream os;
+    os << width << "," << height << ";";
+    for (auto value : tmp) {
+      os << value << ",";
+    }
+    return os.str();
   }
 
   std::variant<int, std::string> validateKey(const std::string_view &key) {

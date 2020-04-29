@@ -119,10 +119,22 @@ int main(int argc, char **argv) {
               })
 
 
+              .get("/api/map", [&state](auto *res, auto *req) {
+                res->writeHeader("Content-Type", "application/json")->end(state.serializeMap());
+              })
+
+
+              .get("/api/players", [&state](auto *res, auto *req) {
+                res->writeHeader("Content-Type", "application/json")->end(state.serializePlayers());
+              })
+
+
               .post("/api/quit/:key", [&asyncFileStreamer](auto *res, auto *req) {
                 std::cout << req->getParameter(0) << std::endl;
-                res->writeHeader("Content-Type", "text/html; charset=utf-8")->end("success");
+                res->writeHeader("Content-Type", "text/html; charset=utf-8")->end("Not Implemented yet");
               })
+
+
               .get("/api/*", [&asyncFileStreamer](auto *res, auto *req) {
                 res->writeHeader("Content-Type", "application/json")->end("{\"hello\": \"world\"}");
               })
