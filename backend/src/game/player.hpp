@@ -100,7 +100,6 @@ public:
 
   std::string serializeMap() {
     std::ostringstream os;
-    os << width << "," << height << ";";
     for (auto value : board) {
       os << value << ",";
     }

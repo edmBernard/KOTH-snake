@@ -41,13 +41,11 @@ var Board = {
 
     m.request({
       method: "GET",
-      url: "/api/map",
+      url: "/api/map/size",
       extract: function (xhr) { return xhr.responseText }
     })
     .then(function (result) {
-      let res = result.split(";");
-      let [width, height] = res[0].split(",");
-      let board = res[1].split(",");
+      let [width, height] = result.split(",");
 
       BoardState.dimension = {
         width: width,
@@ -62,25 +60,16 @@ var Board = {
 
     m.request({
       method: "GET",
-      url: "/api/map",
+      url: "/api/map/buffer",
       extract: function (xhr) { return xhr.responseText }
     })
     .then(function (result) {
-      let res = result.split(";");
-      let [width, height] = res[0].split(",");
-      let board = res[1].split(",");
+      let board = result.split(",");
 
-      BoardState.dimension = {
-        width: width,
-        height: height
-      };
-      console.log(BoardState);
-      BoardState.squareSize = BoardState.size.width / width
-
-      for (let j = 0; j < height; j++) {
-        for (let i = 0; i < width; i++) {
+      for (let j = 0; j < BoardState.dimension.height; j++) {
+        for (let i = 0; i < BoardState.dimension.width; i++) {
           let square = sb.rect(i * BoardState.squareSize, j * BoardState.squareSize, BoardState.squareSize, BoardState.squareSize);
-          square.attr({ fill: BoardState.color_wheel[board[i + j * width]] });
+          square.attr({ fill: BoardState.color_wheel[board[i + j * BoardState.dimension.width]] });
           square.attr({ stroke: "#cccccc", strokeWidth: 1 });
           BoardState.square_list.push(square);
         }

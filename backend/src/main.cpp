@@ -119,8 +119,16 @@ int main(int argc, char **argv) {
               })
 
 
-              .get("/api/map", [&state](auto *res, auto *req) {
+              .get("/api/map/buffer", [&state](auto *res, auto *req) {
                 res->writeHeader("Content-Type", "text/html; charset=utf-8")->end(state.serializeMap());
+              })
+
+              .get("/api/map/size", [&state](auto *res, auto *req) {
+                res->writeHeader("Content-Type", "text/html; charset=utf-8")->end(fmt::format("{0},{1}", state.width, state.height));
+              })
+
+              .get("/api/map/image", [&state](auto *res, auto *req) {
+                res->writeHeader("Content-Type", "text/html; charset=utf-8")->end("Not implemented yet");
               })
 
 
