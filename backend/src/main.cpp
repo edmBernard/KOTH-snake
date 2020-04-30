@@ -72,8 +72,9 @@ int main(int argc, char **argv) {
                 int color;
                 auto result = std::from_chars(sv.data(), sv.data() + sv.size(), color);
                 if (result.ec == std::errc::invalid_argument) {
-                  // TODO: return proper error code
+                  res->writeStatus("400");
                   res->writeHeader("Content-Type", "text/html; charset=utf-8")->end("Bad color value");
+                  return;
                 }
 
                 int playerIdx = state.addPlayer(x, y, color);
@@ -88,11 +89,11 @@ int main(int argc, char **argv) {
                 std::cout << req->getParameter(0) << std::endl;
                 // TODO: add hash table to obfuscate player index in a hash or big number
 
-                // convertion between string_view to int was ugly as fuck but don't find better way
-                // TODO: factorize convertion string_view to int
                 auto key_variant = state.validateKey(req->getParameter(0));
                 if (key_variant.index() == 1) {
+                  res->writeStatus("400");
                   res->writeHeader("Content-Type", "text/html; charset=utf-8")->end(std::get<std::string>(key_variant));
+                  return;
                 }
                 int key = std::get<int>(key_variant);
                 res->writeHeader("Content-Type", "application/json")->end(fmt::format("{0},{1},{2}", state.positionsX[key], state.positionsY[key], state.colors[key]));
@@ -103,13 +104,17 @@ int main(int argc, char **argv) {
 
                 auto key_variant = state.validateKey(req->getParameter(0));
                 if (key_variant.index() == 1) {
+                  res->writeStatus("400");
                   res->writeHeader("Content-Type", "text/html; charset=utf-8")->end(std::get<std::string>(key_variant));
+                  return;
                 }
                 int key = std::get<int>(key_variant);
 
                 auto dir_variant = state.validateDirection(req->getParameter(1));
                 if (dir_variant.index() == 1) {
+                  res->writeStatus("400");
                   res->writeHeader("Content-Type", "text/html; charset=utf-8")->end(std::get<std::string>(dir_variant));
+                  return;
                 }
                 int direction = std::get<DIRECTION>(dir_variant);
 
@@ -137,13 +142,13 @@ int main(int argc, char **argv) {
               })
 
 
-              .post("/api/quit/:key", [&asyncFileStreamer](auto *res, auto *req) {
+              .post("/api/quit/:key", [](auto *res, auto *req) {
                 std::cout << req->getParameter(0) << std::endl;
                 res->writeHeader("Content-Type", "text/html; charset=utf-8")->end("Not Implemented yet");
               })
 
 
-              .get("/api/*", [&asyncFileStreamer](auto *res, auto *req) {
+              .get("/api/*", [](auto *res, auto *req) {
                 res->writeHeader("Content-Type", "application/json")->end("{\"hello\": \"world\"}");
               })
 
@@ -154,10 +159,14 @@ int main(int argc, char **argv) {
                 res->end();
               })
               // Default to home page
-              .get("/*", [&asyncFileStreamer](auto *res, auto *req) {
+              .get("/", [&asyncFileStreamer](auto *res, auto *req) {
                 // You can efficiently stream huge files too
                 asyncFileStreamer.streamFile(res, "/");
                 res->end();
+              })
+              .get("/*", [](auto *res, auto *req) {
+                res->writeStatus("404");
+                res->end("Not Found");
               })
         .listen(port, [port, root](auto *token) {
           if (token) {

@@ -9,22 +9,30 @@ var PlayerState = {
 
 
 var Player = {
-  oninit: function(vnode) {
+  oninit: function (vnode) {
     m.request({
       method: "GET",
       url: "/api/register/Erwan/1",
-      extract: function(xhr) {return xhr.responseText}
+      extract: function (xhr) { return xhr.responseText }
     })
-    .then(function(result) {
-        console.log(result);
+      .then(function (result) {
         [PlayerState.playerIdx, PlayerState.position.x, PlayerState.position.y, PlayerState.color] = result.split(",");
-    })
+
+        setInterval(function () {
+
+          m.request({
+            method: "POST",
+            url: "/api/move/:key/:dir",
+            params: { key: PlayerState.playerIdx, dir: 1 }
+          });
+        }, 10000);
+      })
   },
-  view: function(vnode) {
+  view: function (vnode) {
     return m("player", [
-      m("h2",  { class: "small-margin-bottom" }, "Player Index : " +  PlayerState.playerIdx),
-      m("div", "Position : " +  PlayerState.position.x + "," +  PlayerState.position.y),
-      m("div", "Color : " +  PlayerState.color),
+      m("h2", { class: "small-margin-bottom" }, "Player Index : " + PlayerState.playerIdx),
+      m("div", "Position : " + PlayerState.position.x + "," + PlayerState.position.y),
+      m("div", "Color : " + PlayerState.color),
     ]);
   }
 }

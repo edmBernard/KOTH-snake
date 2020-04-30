@@ -1,0 +1,22 @@
+
+.button-container {
+    margin: 0px 0px 4px 0px;
+}
+
+.button-error {
+    background: rgb(202, 60, 60);
+    color: white;
+}
+
+.button-small {
+    font-size: 85%;
+}
+
+.small-margin-bottom {
+    margin-bottom: 4px;
+}
+
+.main {
+    text-align: center;
+    /* background: rgb(50, 50, 50); */
+}
