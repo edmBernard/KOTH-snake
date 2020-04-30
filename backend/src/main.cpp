@@ -52,8 +52,8 @@ int main(int argc, char **argv) {
 
     States state(result["width"].as<int>(), result["height"].as<int>());
 
-
     std::mutex mx;
+    // TODO: add mutex inside State to lock writing/reading operation
     std::thread logicLoop(gameLoop, std::ref(state), std::ref(mx));
 
     std::random_device rd;
@@ -62,7 +62,7 @@ int main(int argc, char **argv) {
     std::uniform_int_distribution<int> distHeight(0, state.height - 1);
 
     uWS::App()
-              .get("/api/register/:name/:color", [&state, &randomGenerator, &distWidth, &distHeight](auto *res, auto *req) {
+              .get("/api/register/:name/:color", [&state, &mx, &randomGenerator, &distWidth, &distHeight](auto *res, auto *req) {
                 // TODO: do something with use the player name
                 int x = distHeight(randomGenerator);
                 int y = distWidth(randomGenerator);
@@ -76,8 +76,9 @@ int main(int argc, char **argv) {
                   res->writeHeader("Content-Type", "text/html; charset=utf-8")->end("Bad color value");
                   return;
                 }
-
+                mx.lock();
                 int playerIdx = state.addPlayer(x, y, color);
+                mx.unlock();
 
                 // TODO: add hash table to obfuscate player index in a hash or big number
                 // TODO: add json output format currently key,x,y,color
@@ -100,7 +101,7 @@ int main(int argc, char **argv) {
               })
 
 
-              .post("/api/move/:key/:direction", [&state](auto *res, auto *req) {
+              .post("/api/move/:key/:direction", [&state, &mx](auto *res, auto *req) {
 
                 auto key_variant = state.validateKey(req->getParameter(0));
                 if (key_variant.index() == 1) {
@@ -118,7 +119,9 @@ int main(int argc, char **argv) {
                 }
                 int direction = std::get<DIRECTION>(dir_variant);
 
+                mx.lock();
                 state.setDirection(key, static_cast<DIRECTION>(direction));
+                mx.unlock();
 
                 res->writeHeader("Content-Type", "text/html; charset=utf-8")->end("success");
               })
