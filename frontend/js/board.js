@@ -68,7 +68,7 @@ var Board = {
         for (let j = 0; j < BoardState.dimension.height; j++) {
           for (let i = 0; i < BoardState.dimension.width; i++) {
             let square = sb.rect(i * BoardState.squareSize, j * BoardState.squareSize, BoardState.squareSize, BoardState.squareSize);
-            square.attr({ fill: BoardState.color_wheel[board[i + j * BoardState.dimension.width]] });
+            square.attr({ fill: BoardState.color_wheel[board[i + j * BoardState.dimension.width] % color_wheel.length] });
             square.attr({ stroke: "#cccccc", strokeWidth: 1 });
             BoardState.square_list.push(square);
           }

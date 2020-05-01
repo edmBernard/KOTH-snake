@@ -32,7 +32,13 @@ var Client = {
     return m("main", { class: "main" }, [
       m("h1", { class: "small-margin-bottom" }, "KOTH Snake"),
       m("div", { class: "pure-g" }, m("div", { class: "pure-u-1" }, m(Player))),
-      m("button", { class: "pure-button button-small pure-button-primary", onclick: function () { BoardState.update_board(); } }, "Update"),
+      m(".pure-u-1.pure-button-group",
+        m("button", { class: "pure-button button-small pure-button-primary", onclick: function () { BoardState.update_board(); } }, "Update"),
+        m("button", { class: "pure-button button-small", onclick: function () { setDirection(direction.up, PlayerState.playerIdx); } }, "Up"),
+        m("button", { class: "pure-button button-small", onclick: function () { setDirection(direction.down, PlayerState.playerIdx); } }, "Down"),
+        m("button", { class: "pure-button button-small", onclick: function () { setDirection(direction.left, PlayerState.playerIdx); } }, "Left"),
+        m("button", { class: "pure-button button-small", onclick: function () { setDirection(direction.right, PlayerState.playerIdx); } }, "Right"),
+      ),
       m("div", { class: "pure-g" }, m("div", { class: "pure-u-1" }, m(Board, { board_width: board_width, color_wheel: color_wheel })))
     ])
   }

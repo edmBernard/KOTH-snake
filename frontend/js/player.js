@@ -17,15 +17,6 @@ var Player = {
     })
       .then(function (result) {
         [PlayerState.playerIdx, PlayerState.position.x, PlayerState.position.y, PlayerState.color] = result.split(",");
-
-        setInterval(function () {
-
-          m.request({
-            method: "POST",
-            url: "/api/move/:key/:dir",
-            params: { key: PlayerState.playerIdx, dir: 1 }
-          });
-        }, 10000);
       })
   },
   view: function (vnode) {

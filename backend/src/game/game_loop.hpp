@@ -12,10 +12,9 @@
 inline void gameLoop(States &state, std::mutex &mx) {
 
   while (true) {
-    std::this_thread::sleep_for(std::chrono::seconds(1));
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
     mx.lock();
     state.update();
-    std::cout << state << std::endl;
     mx.unlock();
   }
 }
