@@ -1,3 +1,6 @@
+// establish a connection to the server
+const socket = new WebSocket('ws://localhost:3000/');
+
 var BoardState = {
   squareSize: 0,
   size: {
@@ -11,7 +14,6 @@ var BoardState = {
   color_wheel: [],
   square_list: [],
   update_board: function () {
-    console.log("update");
     m.request({
       method: "GET",
       url: "/api/map/buffer",
@@ -62,18 +64,24 @@ var Board = {
       url: "/api/map/buffer",
       extract: function (xhr) { return xhr.responseText }
     })
-      .then(function (result) {
-        let board = result.split(",");
+    .then(function (result) {
+      let board = result.split(",");
 
-        for (let j = 0; j < BoardState.dimension.height; j++) {
-          for (let i = 0; i < BoardState.dimension.width; i++) {
-            let square = sb.rect(i * BoardState.squareSize, j * BoardState.squareSize, BoardState.squareSize, BoardState.squareSize);
-            square.attr({ fill: BoardState.color_wheel[board[i + j * BoardState.dimension.width] % color_wheel.length] });
-            square.attr({ stroke: "#cccccc", strokeWidth: 1 });
-            BoardState.square_list.push(square);
-          }
+      for (let j = 0; j < BoardState.dimension.height; j++) {
+        for (let i = 0; i < BoardState.dimension.width; i++) {
+          let square = sb.rect(i * BoardState.squareSize, j * BoardState.squareSize, BoardState.squareSize, BoardState.squareSize);
+          square.attr({ fill: BoardState.color_wheel[board[i + j * BoardState.dimension.width] % color_wheel.length] });
+          square.attr({ stroke: "#cccccc", strokeWidth: 1 });
+          BoardState.square_list.push(square);
         }
-      })
+      }
+    }).then(function () {
+        console.log("after grid creation");
+        socket.onmessage = (message) => {
+          console.log("get websocket from server will update")
+          BoardState.update_board();
+        };
+      });
   },
   view: function (vnode) {
     return m("svg#board", { width: BoardState.size.width, height: BoardState.size.height });
