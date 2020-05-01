@@ -13,10 +13,10 @@
 inline void gameLoop(States &state, std::mutex &mx, uWS::App &app) {
 
   while (true) {
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    std::this_thread::sleep_for(std::chrono::seconds(1));
     mx.lock();
     state.update();
     mx.unlock();
-    app.publish(std::string_view("update"), std::string_view("update"), uWS::TEXT);
+    app.publish(std::string_view("update"), state.serializeMap(), uWS::TEXT);
   }
 }

@@ -1,5 +1,5 @@
 // establish a connection to the server
-const socket = new WebSocket('ws://localhost:3000/');
+const socket = new WebSocket("ws://" + window.location.hostname + ":" + window.location.port);
 
 var BoardState = {
   squareSize: 0,
@@ -76,10 +76,18 @@ var Board = {
         }
       }
     }).then(function () {
-        console.log("after grid creation");
+
         socket.onmessage = (message) => {
-          console.log("get websocket from server will update")
-          BoardState.update_board();
+          let board = message.data.split(",");
+          for (let j = 0; j < BoardState.dimension.height; j++) {
+            for (let i = 0; i < BoardState.dimension.width; i++) {
+              let squareIdx = i + j * BoardState.dimension.width;
+              let square = BoardState.square_list[squareIdx];
+              square.attr({ fill: BoardState.color_wheel[board[squareIdx]] });
+              square.attr({ stroke: "#cccccc", strokeWidth: 1 });
+            }
+          }
+          console.log("update from ws done");
         };
       });
   },
