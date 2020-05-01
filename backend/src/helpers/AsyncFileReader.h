@@ -87,11 +87,12 @@ public:
       fin.read(cache.data(), cache.length());
 
       cacheOffset = offset;
-      hasCache = true;
 
-      std::size_t chunkSize = std::min<std::size_t>(cache.length(), fileSize - offset);
-      cb(std::string_view(cache.data(), chunkSize));
-
+      loop->defer([this, cb, offset]() {
+        hasCache = true;
+        std::size_t chunkSize = std::min<std::size_t>(cache.length(), fileSize - offset);
+        cb(std::string_view(cache.data(), chunkSize));
+      });
     });
   }
 
