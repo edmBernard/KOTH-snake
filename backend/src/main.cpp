@@ -143,7 +143,7 @@ int main(int argc, char **argv) {
       })
 
 
-      .get("/api/players", [&state](auto *res, auto *req) {
+      .get("/api/players/buffer", [&state](auto *res, auto *req) {
         res->writeHeader("Content-Type", "text/html; charset=utf-8")->end(state.serializePlayers());
       })
 

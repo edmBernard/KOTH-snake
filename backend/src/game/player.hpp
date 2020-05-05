@@ -113,7 +113,6 @@ public:
     }
 
     std::ostringstream os;
-    os << width << "," << height << ";";
     for (auto value : tmp) {
       os << value << ",";
     }
