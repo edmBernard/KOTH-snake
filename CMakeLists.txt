@@ -46,6 +46,7 @@ option(BUILD_UNIT_TESTS "Build the unit tests" ON)
   )
 
   add_executable(unit-test ${TEST_SOURCES} ${SOURCES})
+  set_property(TARGET unit-test PROPERTY CXX_STANDARD 17)
   target_link_libraries(unit-test PRIVATE -pthread -lstdc++fs)
 
   add_test(NAME "unit_test_default"
@@ -65,6 +66,7 @@ if(BUILD_BENCHMARK)
   )
 
   add_executable(benchmark ${BENCHMARK_SOURCES} ${SOURCES})
+  set_property(TARGET benchmark PROPERTY CXX_STANDARD 17)
   target_link_libraries(benchmark PRIVATE -pthread -lstdc++fs)
 
   add_test(NAME "benchmark_default"
