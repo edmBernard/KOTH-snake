@@ -9,7 +9,7 @@ The goal is to allow user to create bot that play the game. And in the futur be 
 
 We use [vcpkg](https://github.com/Microsoft/vcpkg) to manage dependencies
 
-KoTH-snake depend on:
+KoTH-snake depends on:
 - [uWebSocket](https://github.com/uNetworking/uWebSockets): Websocket and http server
 - [cxxopts](https://github.com/jarro2783/cxxopts): Command line argument parsing
 - [fmt](https://fmt.dev/latest/index.html): A modern formatting library
